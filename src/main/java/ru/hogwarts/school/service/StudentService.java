@@ -2,49 +2,45 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.StudentNotFoundException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
-    private final Map<Long, Student> studentMap;
-    private long studentId = 1;
+//    @Autowired
+    private final StudentRepository studentRepository;
 
-    public StudentService() {
-        studentMap = new HashMap<>();
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
     public Student createStudent(Student student){
-        studentMap.put(studentId,student);
-        studentId++;
-        return student;
+        student.setId(null);
+        return studentRepository.save(student);
     }
     public Student getStudent(long id){
-        if (!studentMap.containsKey(id)){
-            throw new StudentNotFoundException(id);
-        }
-        return studentMap.get(id);
+        return studentRepository.findById(id).orElseThrow(()->new StudentNotFoundException(id));
     }
     public Student updateStudent(long id, Student newStudent){
         Student oldStudent = getStudent(id);
         oldStudent.setAge(newStudent.getAge());
         oldStudent.setName(newStudent.getName());
-        studentMap.put(id,oldStudent);
-        return newStudent;
+        return studentRepository.save(oldStudent);
     }
     public Student deleteStudent(long id){
-        if (!studentMap.containsKey(id)){
-            throw new StudentNotFoundException(id);
-        }
-        return studentMap.remove(id);
+        Student student = getStudent(id);
+        studentRepository.delete(student);
+        return student;
     }
 
-    public Collection<Student> findByAge(int age){
-        return studentMap.values().stream()
-                .filter(student -> student.getAge()==age)
-                .collect(Collectors.toList());
+    public Collection<Student> findByAgeBetween(int min, int max){
+        return studentRepository.findByAgeBetween(min,max);
     }
+
+    public Faculty getFacultyByStudent(long id) {
+        return studentRepository.findById(id).orElse(null).getFaculty();
+    }
+
 }

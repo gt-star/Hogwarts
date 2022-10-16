@@ -2,51 +2,47 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.FacultyNotFoundException;
-import ru.hogwarts.school.exception.StudentNotFoundException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 public class FacultyService {
-    private final Map<Long, Faculty> facultyMap;
-    private long studentId = 1;
+    private final FacultyRepository facultyRepository;
 
-    public FacultyService() {
-        facultyMap = new HashMap<>();
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
     }
     public Faculty createFaculty(Faculty faculty){
-        facultyMap.put(studentId,faculty);
-        studentId++;
-        return faculty;
+        faculty.setId(null);
+        return facultyRepository.save(faculty);
     }
     public Faculty getFaculty(long id){
-        if (!facultyMap.containsKey(id)){
-            throw new FacultyNotFoundException(id);
-        }
-        return facultyMap.get(id);
+        return facultyRepository.findById(id).orElseThrow(()-> new FacultyNotFoundException(id));
     }
     public Faculty updateFaculty(long id, Faculty newFaculty){
         Faculty oldsFaculty = getFaculty(id);
         oldsFaculty.setName(newFaculty.getName());
         oldsFaculty.setColor(newFaculty.getColor());
-        facultyMap.put(id,oldsFaculty);
-        return newFaculty;
+        return facultyRepository.save(oldsFaculty);
     }
     public Faculty deleteFaculty(long id){
-        if (!facultyMap.containsKey(id)){
-            throw new FacultyNotFoundException(id);
-        }
-        return facultyMap.remove(id);
+        Faculty faculty = getFaculty(id);
+        facultyRepository.delete(faculty);
+        return faculty;
+    }
+    public Faculty findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(String color, String name){
+        return facultyRepository.findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(color,name);
     }
 
-    public Collection<Faculty> findByColor(String color){
-        return facultyMap.values().stream()
-                .filter(faculty -> faculty.getColor().equals(color))
-                .collect(Collectors.toList());
+    public Collection<Student> getStudentsByFaculty(long id) {
+        Collection<Student> students = facultyRepository.findById(id)
+                .map(faculty -> faculty.getStudents())
+                .orElseGet(Collections::emptyList);
+        return students;
     }
+
 }
