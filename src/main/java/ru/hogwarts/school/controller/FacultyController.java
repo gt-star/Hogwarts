@@ -27,20 +27,17 @@ public class FacultyController {
                                  @RequestBody Faculty faculty){
         return facultyService.updateFaculty(id,faculty);
     }
-    @DeleteMapping("/faculty")
+    @DeleteMapping("/{id}")
     public Faculty deleteFaculty(@PathVariable long id){
         return facultyService.deleteFaculty(id);
     }
 
-    @GetMapping("/{id}/students")
+    @GetMapping("{id}/students")
     public Collection<Student> getStudentsOfFaculty(@PathVariable("id") Long id) {
         return facultyService.getStudentsByFaculty(id);
     }
-
-
-    @GetMapping("/facultyOfName")
-    public Faculty findByNameOrColorContainsIgnoreCase(@RequestParam(required = false) String color,
-                                                       @RequestParam(required = false) String name) {
-        return facultyService.findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(color, name);
+    @GetMapping("/facultyOfNameOrColor")
+    public Collection<Faculty> findByNameOrColorContainsIgnoreCase(@RequestParam(required = false) String nameOrColor){
+        return facultyService.findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(nameOrColor);
     }
 }

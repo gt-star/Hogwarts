@@ -34,15 +34,14 @@ public class FacultyService {
         facultyRepository.delete(faculty);
         return faculty;
     }
-    public Faculty findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(String color, String name){
-        return facultyRepository.findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(color,name);
+    public Collection<Faculty> findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(String nameOrColor){
+        return facultyRepository.findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(nameOrColor);
     }
 
     public Collection<Student> getStudentsByFaculty(long id) {
-        Collection<Student> students = facultyRepository.findById(id)
-                .map(faculty -> faculty.getStudents())
+        return facultyRepository.findById(id)
+                .map(Faculty::getStudents)
                 .orElseGet(Collections::emptyList);
-        return students;
     }
 
 }
