@@ -42,11 +42,19 @@ public class Student {
     public void setAge(int age) {
         this.age = age;
     }
+
     public Faculty getFaculty() {
         return faculty;
     }
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
+    }
+
     public Avatar getAvatar(){
         return  avatar;
+    }
+    public void setAvatar(Avatar avatar) {
+        this.avatar = avatar;
     }
     public Student(Long id, String name, int age) {
         this.id = id;
