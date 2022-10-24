@@ -9,6 +9,7 @@ import ru.hogwarts.school.repository.AvatarRepository;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -23,7 +24,7 @@ public class AvatarService {
     }
 
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
-        Student student = avatarRepository.getById(studentId);
+        Student student = studentService.getStudent(studentId);
         String avatarsDir = null;
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -36,7 +37,7 @@ public class AvatarService {
         ) {
             bis.transferTo(bos);
         }
-        Avatar avatar = findAvatar(studentId);
+        Avatar avatar = avatarRepository.findByStudentId(studentId);
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
         avatar.setFileSize(avatarFile.getSize());
@@ -45,8 +46,8 @@ public class AvatarService {
         avatarRepository.save(avatar);
     }
 
-    public Avatar findAvatar(Long studentId) {
-        return studentService.getStudent(studentId).getAvatar();
+    public Avatar findAvatar(long studentId) {
+        return avatarRepository.findByStudentId(studentId);
     }
 
     private String getExtensions(String fileName) {

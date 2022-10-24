@@ -6,6 +6,8 @@ import ru.hogwarts.school.model.Student;
 
 import java.util.Collection;
 
-public interface AvatarRepository extends JpaRepository<Student,Long> {
-    Collection<Student> save(Avatar avatar);
+public interface AvatarRepository extends JpaRepository<Avatar,Long> {
+    Avatar findByStudentId(Long id);
+
+
 }
