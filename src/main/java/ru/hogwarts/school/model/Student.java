@@ -11,8 +11,11 @@ public class Student {
     private String name;
     private int age;
     @ManyToOne
-    @JoinColumn(name = "faculty_id")
+    @Column(name = "faculty_id")
     private Faculty faculty;
+    @OneToOne
+    @Column(name = "avatar_id")
+    private Avatar avatar;
 
     public Student() {
     }
@@ -41,6 +44,9 @@ public class Student {
     }
     public Faculty getFaculty() {
         return faculty;
+    }
+    public Avatar getAvatar(){
+        return  avatar;
     }
     public Student(Long id, String name, int age) {
         this.id = id;
