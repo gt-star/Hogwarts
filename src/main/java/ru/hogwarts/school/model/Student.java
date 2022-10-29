@@ -7,14 +7,13 @@ import java.util.Objects;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     private String name;
     private int age;
     @ManyToOne
-    @Column(name = "faculty_id")
+    @JoinColumn(name = "faculty_id")
     private Faculty faculty;
-    @OneToOne
-    @Column(name = "avatar_id")
+    @OneToOne(mappedBy = "student")
     private Avatar avatar;
 
     public Student() {

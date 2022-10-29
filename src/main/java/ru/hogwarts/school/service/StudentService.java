@@ -13,13 +13,10 @@ import java.util.Collection;
 
 @Service
 public class StudentService {
-//    @Autowired
     private final StudentRepository studentRepository;
-    private final AvatarRepository avatarRepository;
 
-    public StudentService(StudentRepository studentRepository, AvatarRepository avatarRepository) {
+    public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
-        this.avatarRepository = avatarRepository;
     }
     public Student createStudent(Student student){
         student.setId(null);
@@ -50,4 +47,15 @@ public class StudentService {
                 .orElseThrow(() -> new FacultyNotFoundException(id));
     }
 
+    public Integer getAllByCountStudent(){
+        return studentRepository.getAllByCountStudent();
+    }
+
+    public Double getAverageAge() {
+        return studentRepository.getAverageAge();
+    }
+
+    public Collection<Student> getLastOfFiveStudents() {
+        return studentRepository.getLastOfFiveStudents();
+    }
 }
