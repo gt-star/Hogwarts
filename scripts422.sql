@@ -5,7 +5,7 @@ CREATE TABLE Person (
     DriverLicense INTEGER DEFAULT (0)
 );
 CREATE TABLE Car (
-    Id SERIAL PRIMARY KEY,
+    PersonId SERIAL PRIMARY KEY,
     Brand VARCHAR NOT NULL,
     Model VARCHAR NOT NULL,
     Price NUMERIC,
