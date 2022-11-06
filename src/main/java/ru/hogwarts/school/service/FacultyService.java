@@ -1,52 +1,58 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.FacultyNotFoundException;
-import ru.hogwarts.school.exception.StudentNotFoundException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 public class FacultyService {
-    private final Map<Long, Faculty> facultyMap;
-    private long studentId = 1;
-
-    public FacultyService() {
-        facultyMap = new HashMap<>();
+    private final FacultyRepository facultyRepository;
+    Logger logger = LoggerFactory.getLogger(FacultyService.class);
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
     }
     public Faculty createFaculty(Faculty faculty){
-        facultyMap.put(studentId,faculty);
-        studentId++;
-        return faculty;
+        logger.info("Method called createFaculty");
+        faculty.setId(null);
+        return facultyRepository.save(faculty);
     }
     public Faculty getFaculty(long id){
-        if (!facultyMap.containsKey(id)){
-            throw new FacultyNotFoundException(id);
-        }
-        return facultyMap.get(id);
+        logger.info("Method called getFaculty");
+        return facultyRepository.findById(id).orElseThrow(()-> {
+            logger.error("There is not student with id = " + id);
+            return new FacultyNotFoundException(id);
+        });
     }
     public Faculty updateFaculty(long id, Faculty newFaculty){
+        logger.info("Method called updateFaculty");
         Faculty oldsFaculty = getFaculty(id);
         oldsFaculty.setName(newFaculty.getName());
         oldsFaculty.setColor(newFaculty.getColor());
-        facultyMap.put(id,oldsFaculty);
-        return newFaculty;
+        return facultyRepository.save(oldsFaculty);
     }
     public Faculty deleteFaculty(long id){
-        if (!facultyMap.containsKey(id)){
-            throw new FacultyNotFoundException(id);
-        }
-        return facultyMap.remove(id);
+        logger.info("Method called deleteFaculty");
+        Faculty faculty = getFaculty(id);
+        facultyRepository.delete(faculty);
+        return faculty;
+    }
+    public Collection<Faculty> findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(String nameOrColor){
+        logger.info("Method called findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase");
+        return facultyRepository.findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(nameOrColor,nameOrColor);
     }
 
-    public Collection<Faculty> findByColor(String color){
-        return facultyMap.values().stream()
-                .filter(faculty -> faculty.getColor().equals(color))
-                .collect(Collectors.toList());
+    public Collection<Student> getStudentsByFaculty(long id) {
+        logger.info("Method called getStudentsByFaculty");
+        return facultyRepository.findById(id)
+                .map(Faculty::getStudents)
+                .orElseGet(Collections::emptyList);
     }
+
 }
