@@ -4,3 +4,4 @@
 
 CREATE INDEX search_student ON students(name)
 
+
