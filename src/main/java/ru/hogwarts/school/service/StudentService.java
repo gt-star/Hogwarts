@@ -12,6 +12,7 @@ import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.stream.Stream;
 
 @Service
 public class StudentService {
@@ -76,5 +77,28 @@ public class StudentService {
     public Collection<Student> getLastOfFiveStudents() {
         logger.info("Method called getLastOfFiveStudents");
         return studentRepository.getLastOfFiveStudents();
+    }
+
+    public Stream<String> findStudentNameStartedWithA() {
+        return studentRepository.findAll().stream()
+                .map(Student::getName)
+                .map(String::toUpperCase)
+                .filter(s -> s.startsWith("A"))
+                .sorted();
+    }
+
+    public double findStudentAverageAge() {
+        return studentRepository.findAll().stream()
+                .mapToDouble(Student::getAge)
+                .average()
+                .orElseThrow();
+    }
+    public int streamParallel() {
+        Stream<Integer> computed = Stream
+                .iterate(1, a -> a + 1)
+                .parallel()
+                .limit(1_000_000);
+        int sum = computed.reduce(0, (a, b) -> a + b );
+        return sum;
     }
 }

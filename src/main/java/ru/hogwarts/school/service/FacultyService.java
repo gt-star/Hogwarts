@@ -10,6 +10,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 
 @Service
 public class FacultyService {
@@ -55,4 +56,10 @@ public class FacultyService {
                 .orElseGet(Collections::emptyList);
     }
 
+    public String findTheLongestFacultyName() {
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length))
+                .orElseThrow();
+    }
 }

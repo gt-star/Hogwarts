@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import liquibase.pro.packaged.G;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -39,5 +40,9 @@ public class FacultyController {
     @GetMapping("/facultyOfNameOrColor")
     public Collection<Faculty> findByNameOrColorContainsIgnoreCase(@RequestParam(required = true) String nameOrColor){
         return facultyService.findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(nameOrColor);
+    }
+    @GetMapping("/findTheLongestFacultyName")
+    public String findTheLongestFacultyName(){
+        return facultyService.findTheLongestFacultyName();
     }
 }

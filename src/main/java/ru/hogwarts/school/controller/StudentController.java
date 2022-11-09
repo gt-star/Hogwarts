@@ -7,6 +7,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
+import java.util.stream.Stream;
 
 @RequestMapping("/students")
 @RestController
@@ -54,6 +55,18 @@ public class StudentController {
     @GetMapping("/lastFiveStudents")
     public Collection<Student> getLastOfFiveStudents(){
         return studentService.getLastOfFiveStudents();
+    }
+    @GetMapping("/findStudentNameStartedWithA")
+    public Stream<String> findStudentNameStartedWithA(){
+        return studentService.findStudentNameStartedWithA();
+    }
+    @GetMapping("/findStudentAverageAge")
+    public double findStudentAverageAge(){
+        return studentService.findStudentAverageAge();
+    }
+    @GetMapping("/streamParallel")
+    public int streamParallel() {
+        return studentService.streamParallel();
     }
 
 }
