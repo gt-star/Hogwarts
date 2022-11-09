@@ -1,6 +1,6 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.http.ResponseEntity;
+import liquibase.pro.packaged.G;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -20,21 +20,29 @@ public class FacultyController {
         return facultyService.createFaculty(faculty);
     }
     @GetMapping("/{id}")
-    public Faculty getStudent(@PathVariable long id){
+    public Faculty getFaculty(@PathVariable long id){
         return facultyService.getFaculty(id);
     }
     @PutMapping("/{id}")
-    public Faculty updateStudent(@PathVariable long id,
+    public Faculty updateFaculty(@PathVariable long id,
                                  @RequestBody Faculty faculty){
         return facultyService.updateFaculty(id,faculty);
     }
     @DeleteMapping("/{id}")
-    public Faculty deleteStudent(@PathVariable long id){
+    public Faculty deleteFaculty(@PathVariable long id){
         return facultyService.deleteFaculty(id);
     }
-    @GetMapping()
-    public Collection<Faculty> findByColor (@RequestParam String color){
-        return facultyService.findByColor(color);
-    }
 
+    @GetMapping("{id}/students")
+    public Collection<Student> getStudentsOfFaculty(@PathVariable("id") Long id) {
+        return facultyService.getStudentsByFaculty(id);
+    }
+    @GetMapping("/facultyOfNameOrColor")
+    public Collection<Faculty> findByNameOrColorContainsIgnoreCase(@RequestParam(required = true) String nameOrColor){
+        return facultyService.findAllByColorContainsIgnoreCaseOrNameContainsIgnoreCase(nameOrColor);
+    }
+    @GetMapping("/findTheLongestFacultyName")
+    public String findTheLongestFacultyName(){
+        return facultyService.findTheLongestFacultyName();
+    }
 }
