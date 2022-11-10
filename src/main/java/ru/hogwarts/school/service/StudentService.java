@@ -2,6 +2,7 @@ package ru.hogwarts.school.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.FacultyNotFoundException;
 import ru.hogwarts.school.exception.StudentNotFoundException;
@@ -12,6 +13,7 @@ import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service
@@ -100,5 +102,30 @@ public class StudentService {
                 .limit(1_000_000);
         int sum = computed.reduce(0, (a, b) -> a + b );
         return sum;
+    }
+
+    public void printStudents() {
+        List<Student> students = studentRepository.findAll(PageRequest.of(0,6)).getContent();
+
+        printStudents(students.subList(0,2));
+        new Thread(()-> printStudents(students.subList(2,4))).start();
+        new Thread(()-> printStudents(students.subList(4,4))).start();
+    }
+    private void printStudents(List<Student> students){
+        for (Student student : students){
+            logger.info(student.getName());
+        }
+    }
+    public void printStudentsSync() {
+        List<Student> students = studentRepository.findAll(PageRequest.of(0,6)).getContent();
+
+        printStudentsSync(students.subList(0,2));
+        new Thread(()-> printStudents(students.subList(2,4))).start();
+        new Thread(()-> printStudents(students.subList(4,4))).start();
+    }
+    private synchronized void printStudentsSync(List<Student> students){
+        for (Student student : students){
+            logger.info(student.getName());
+        }
     }
 }
